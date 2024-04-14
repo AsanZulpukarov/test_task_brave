@@ -65,36 +65,64 @@ class _MatrixScreenState extends State<MatrixScreen> {
             Positioned(
               left: _maxSize * rowIndex - 6,
               top: _maxSize * columnIndex - 44,
-              child: _imageWithRotate(
-                quarterTurns: 1,
-                alignmentImage: Alignment.centerLeft,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    currentIndex++;
+                  });
+                },
+                child: _imageWithRotate(
+                  quarterTurns: 1,
+                  alignmentImage: Alignment.centerLeft,
+                ),
               ),
             ),
           if (columnIndex != columnCount)
             Positioned(
               left: _maxSize * rowIndex - 44,
               top: _maxSize * columnIndex - 6,
-              child: _imageWithRotate(
-                quarterTurns: 2,
-                alignmentImage: Alignment.topCenter,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    currentIndex += rowCount;
+                  });
+                },
+                child: _imageWithRotate(
+                  quarterTurns: 2,
+                  alignmentImage: Alignment.topCenter,
+                ),
               ),
             ),
           if (rowIndex != 1)
             Positioned(
               left: _maxSize * (rowIndex - 1) - 24,
               top: _maxSize * columnIndex - 44,
-              child: _imageWithRotate(
-                quarterTurns: 3,
-                alignmentImage: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    currentIndex--;
+                  });
+                },
+                child: _imageWithRotate(
+                  quarterTurns: 3,
+                  alignmentImage: Alignment.centerRight,
+                ),
               ),
             ),
           if (columnIndex != 1)
             Positioned(
               left: _maxSize * rowIndex - 44,
               top: _maxSize * (columnIndex - 1) - 24,
-              child: _imageWithRotate(
-                quarterTurns: 4,
-                alignmentImage: Alignment.bottomCenter,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    currentIndex -= rowCount;
+                  });
+                },
+                child: _imageWithRotate(
+                  quarterTurns: 4,
+                  alignmentImage: Alignment.bottomCenter,
+                ),
               ),
             ),
         ],

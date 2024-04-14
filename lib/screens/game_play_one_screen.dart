@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
+import 'package:test_task_brave/bloc/game_play_one_bloc.dart';
 import 'package:test_task_brave/widgets/appbar_widget.dart';
-import 'package:test_task_brave/widgets/matrix_screen.dart';
+import 'package:test_task_brave/screens/matrix_screen.dart';
 import 'package:test_task_brave/widgets/navbar_widget.dart';
 
 class GamePlayOneScreen extends StatefulWidget {
@@ -15,10 +17,11 @@ class GamePlayOneScreen extends StatefulWidget {
 class _GamePlayOneScreenState extends State<GamePlayOneScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        top: true,
-        child: Container(
+    final bloc = GamePlayOneBloc();
+    return BlocProvider(
+      create: (context) => bloc,
+      child: Scaffold(
+        body: Container(
           padding: const EdgeInsets.all(20),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -33,7 +36,7 @@ class _GamePlayOneScreenState extends State<GamePlayOneScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(height: 10.h),
+              SizedBox(height: 20.h),
               const AppBarWidget(),
               SizedBox(height: 10.h),
               const MatrixScreen(),
@@ -44,7 +47,7 @@ class _GamePlayOneScreenState extends State<GamePlayOneScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '100',
+                        bloc.totalCoin.toString(),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 24.sp,
@@ -75,9 +78,9 @@ class _GamePlayOneScreenState extends State<GamePlayOneScreen> {
             ],
           ),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: const NavBarWidget(),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: const NavBarWidget(),
     );
   }
 }

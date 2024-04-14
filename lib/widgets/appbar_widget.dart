@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:test_task_brave/bloc/game_play_one_bloc.dart';
 
 class AppBarWidget extends StatelessWidget {
   const AppBarWidget({super.key});
@@ -25,7 +27,9 @@ class AppBarWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "0",
+                BlocProvider.of<GamePlayOneBloc>(context)
+                    .currentCoin
+                    .toString(),
                 style: TextStyle(
                   fontSize: 28.sp,
                   color: Colors.white,

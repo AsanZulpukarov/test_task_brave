@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task_brave/bloc/game_play_one_bloc.dart';
+import 'package:test_task_brave/enum/cell_type_enum.dart';
 import 'package:test_task_brave/widgets/bonus_image_widget.dart';
 import 'package:test_task_brave/widgets/box_item.dart';
+import 'package:test_task_brave/widgets/select_case_widget.dart';
 
 class MatrixScreen extends StatelessWidget {
   MatrixScreen({super.key});
@@ -55,7 +57,6 @@ class MatrixScreen extends StatelessWidget {
                         context: context,
                         currentIndex: currentIndex,
                         index: index,
-                        isMove: true,
                       );}
                     },
                     child: BoxItem(
@@ -71,8 +72,9 @@ class MatrixScreen extends StatelessWidget {
                   top: _maxSize * columnIndex - 44,
                   child: GestureDetector(
                     onTap: () {
-                        currentIndex++;
-                        _movePerson(context: context,currentIndex: currentIndex,index: 0,isMove: true);
+                      int index = 0;
+                      index =currentIndex+1;
+                        _movePerson(context: context,currentIndex: currentIndex,index: index);
                     },
                     child: _imageWithRotate(
                       quarterTurns: 1,
@@ -86,9 +88,10 @@ class MatrixScreen extends StatelessWidget {
                   top: _maxSize * columnIndex - 6,
                   child: GestureDetector(
                     onTap: () {
-                        currentIndex += rowCount;
+                      int index = 0;
+                      index = currentIndex + rowCount;
 
-                        _movePerson(context: context,currentIndex: currentIndex,index: 0,isMove: true);
+                        _movePerson(context: context,currentIndex: currentIndex,index: index);
                     },
                     child: _imageWithRotate(
                       quarterTurns: 2,
@@ -101,9 +104,9 @@ class MatrixScreen extends StatelessWidget {
                   left: _maxSize * (rowIndex - 1) - 24,
                   top: _maxSize * columnIndex - 44,
                   child: GestureDetector(
-                    onTap: () {
-                        currentIndex--;
-                        _movePerson(context: context,currentIndex: currentIndex,index: 0,isMove: true);
+                    onTap: () { int index = 0;
+                    index =currentIndex-1;
+                        _movePerson(context: context,currentIndex: currentIndex,index: index);
                     },
                     child: _imageWithRotate(
                       quarterTurns: 3,
@@ -117,8 +120,9 @@ class MatrixScreen extends StatelessWidget {
                   top: _maxSize * (columnIndex - 1) - 24,
                   child: GestureDetector(
                     onTap: () {
-                        currentIndex -= rowCount;
-                        _movePerson(context: context,currentIndex: currentIndex,index: 0,isMove: true);
+                      int index = 0;
+                        index = currentIndex - rowCount;
+                        _movePerson(context: context,currentIndex: currentIndex,index: index);
                     },
                     child: _imageWithRotate(
                       quarterTurns: 4,
@@ -133,31 +137,47 @@ class MatrixScreen extends StatelessWidget {
     );
   }
 
-  _movePerson({required BuildContext context,required int index, required int currentIndex,required bool isMove}) {
+  _movePerson({required BuildContext context,required int index, required int currentIndex}) {
     final bloc = BlocProvider.of<GamePlayOneBloc>(context);
-
-    if(isMove) {
       showDialog(
+        barrierDismissible: false,
         context: context,
         barrierColor: const Color.fromRGBO(95, 95, 95, 0.4),
         builder: (context) {
-            Future.delayed(const Duration(seconds: 1), () {
+          CellEntity cellEntity = bloc.cellList.elementAt(index);
+          if(cellEntity.cellType == CellTypeEnum.luckyCoin){
+            return AlertDialog(
+              backgroundColor: Colors.transparent,
+              alignment: Alignment.center,
+              content: SelectCaseWidget(isLucky: true,),
+            );
+          }
+          else if(cellEntity.cellType == CellTypeEnum.unluckyCoin){
+            return AlertDialog(
+              backgroundColor: Colors.transparent,
+              alignment: Alignment.center,
+              content: SelectCaseWidget(isLucky: false,),
+            );
+          }
+          else {
+            Future.delayed(const Duration(seconds: 2,), () {
               Navigator.of(context).pop(true);
             });
-          print(index);
             bloc.add(GamePlayOneShowBonusEvent(index: index));
-                  return AlertDialog(
-                    backgroundColor: Colors.transparent,
-                    alignment: Alignment.center,
-                    content: BonusImageWidget(
-                      bonusImage: BonusImage.gold,
-                    ),
-                  );
+            return AlertDialog(
+              backgroundColor: Colors.transparent,
+              alignment: Alignment.center,
+              content: BonusImageWidget(
+                bonusImage: cellEntity
+                    .bonusImage,
+              ),
+            );
+          }
         },);
 
       currentIndex = index;
       bloc.add(GamePlayOneMoveEvent(index: index));
-    }
+
 
   }
 

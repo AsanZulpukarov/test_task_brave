@@ -1,23 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task_brave/bloc/game_play_one_bloc.dart';
-import 'package:test_task_brave/enum/cell_type_enum.dart';
 import 'package:test_task_brave/widgets/bonus_image_widget.dart';
 import 'package:test_task_brave/widgets/box_item.dart';
 
-class MatrixScreen extends StatefulWidget {
-  const MatrixScreen({super.key});
+class MatrixScreen extends StatelessWidget {
+  MatrixScreen({super.key});
 
-  @override
-  State<MatrixScreen> createState() => _MatrixScreenState();
-}
-
-class _MatrixScreenState extends State<MatrixScreen> {
-  int currentIndex = 0;
   int columnIndex = 1;
   int rowIndex = 1;
+  int currentIndex = 0;
   final double _maxSize = 56;
   final int columnCount = 10;
   final int rowCount = 6;
@@ -25,11 +17,11 @@ class _MatrixScreenState extends State<MatrixScreen> {
   @override
   Widget build(BuildContext context) {
     final bloc = BlocProvider.of<GamePlayOneBloc>(context);
-    currentIndex = bloc.currentIndex;
-    rowIndex = (currentIndex % 6) + 1;
-    columnIndex = currentIndex ~/ 6.0 + 1;
     return BlocBuilder<GamePlayOneBloc, GamePlayOneState>(
       builder: (context, state) {
+        currentIndex = state.currentIndex;
+        rowIndex = (currentIndex % 6) + 1;
+        columnIndex = currentIndex ~/ 6.0 + 1;
         return Container(
           width: _maxSize * rowCount,
           height: _maxSize * columnCount,
@@ -55,29 +47,16 @@ class _MatrixScreenState extends State<MatrixScreen> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      if (index - 1 == currentIndex ||
-                          index + 1 == currentIndex ||
-                          currentIndex + rowCount == index ||
-                          currentIndex - rowCount == index) {
-                        showDialog(
-                          context: context,
-                          barrierColor: const Color.fromRGBO(95, 95, 95, 0.4),
-                          builder: (context) {
-                            bloc.add(GamePlayOneShowBonusEvent(index: index));
-                            return AlertDialog(
-                              backgroundColor: Colors.transparent,
-                              alignment: Alignment.center,
-                              content: BonusImageWidget(
-                                bonusImage: BonusImage.gold,
-                              ),
-                            );
-                          },
-                        );
-                        setState(() {
-                          currentIndex = index;
-                          bloc.add(GamePlayOneMoveEvent(index: index));
-                        });
-                      }
+        if (index - 1 == currentIndex ||
+        index + 1 == currentIndex ||
+        currentIndex + rowCount == index ||
+        currentIndex - rowCount == index) {
+                      _movePerson(
+                        context: context,
+                        currentIndex: currentIndex,
+                        index: index,
+                        isMove: true,
+                      );}
                     },
                     child: BoxItem(
                       isPerson: index == currentIndex,
@@ -92,9 +71,8 @@ class _MatrixScreenState extends State<MatrixScreen> {
                   top: _maxSize * columnIndex - 44,
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
                         currentIndex++;
-                      });
+                        _movePerson(context: context,currentIndex: currentIndex,index: 0,isMove: true);
                     },
                     child: _imageWithRotate(
                       quarterTurns: 1,
@@ -108,9 +86,9 @@ class _MatrixScreenState extends State<MatrixScreen> {
                   top: _maxSize * columnIndex - 6,
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
                         currentIndex += rowCount;
-                      });
+
+                        _movePerson(context: context,currentIndex: currentIndex,index: 0,isMove: true);
                     },
                     child: _imageWithRotate(
                       quarterTurns: 2,
@@ -124,9 +102,8 @@ class _MatrixScreenState extends State<MatrixScreen> {
                   top: _maxSize * columnIndex - 44,
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
                         currentIndex--;
-                      });
+                        _movePerson(context: context,currentIndex: currentIndex,index: 0,isMove: true);
                     },
                     child: _imageWithRotate(
                       quarterTurns: 3,
@@ -140,9 +117,8 @@ class _MatrixScreenState extends State<MatrixScreen> {
                   top: _maxSize * (columnIndex - 1) - 24,
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
                         currentIndex -= rowCount;
-                      });
+                        _movePerson(context: context,currentIndex: currentIndex,index: 0,isMove: true);
                     },
                     child: _imageWithRotate(
                       quarterTurns: 4,
@@ -155,6 +131,34 @@ class _MatrixScreenState extends State<MatrixScreen> {
         );
       },
     );
+  }
+
+  _movePerson({required BuildContext context,required int index, required int currentIndex,required bool isMove}) {
+    final bloc = BlocProvider.of<GamePlayOneBloc>(context);
+
+    if(isMove) {
+      showDialog(
+        context: context,
+        barrierColor: const Color.fromRGBO(95, 95, 95, 0.4),
+        builder: (context) {
+            Future.delayed(const Duration(seconds: 1), () {
+              Navigator.of(context).pop(true);
+            });
+          print(index);
+            bloc.add(GamePlayOneShowBonusEvent(index: index));
+                  return AlertDialog(
+                    backgroundColor: Colors.transparent,
+                    alignment: Alignment.center,
+                    content: BonusImageWidget(
+                      bonusImage: BonusImage.gold,
+                    ),
+                  );
+        },);
+
+      currentIndex = index;
+      bloc.add(GamePlayOneMoveEvent(index: index));
+    }
+
   }
 
   RotatedBox _imageWithRotate({

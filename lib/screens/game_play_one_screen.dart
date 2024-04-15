@@ -39,20 +39,24 @@ class _GamePlayOneScreenState extends State<GamePlayOneScreen> {
               SizedBox(height: 20.h),
               const AppBarWidget(),
               SizedBox(height: 10.h),
-              const MatrixScreen(),
+              MatrixScreen(),
               SizedBox(height: 10.h),
               Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        bloc.totalCoin.toString(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      BlocBuilder<GamePlayOneBloc, GamePlayOneState>(
+                        builder: (context, state) {
+                          return Text(
+                            state.totalCoin.toString(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          );
+                        },
                       ),
                       Image.asset(
                         'assets/icons/coins.png',

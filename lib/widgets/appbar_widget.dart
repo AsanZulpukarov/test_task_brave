@@ -26,15 +26,18 @@ class AppBarWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                BlocProvider.of<GamePlayOneBloc>(context)
-                    .currentCoin
-                    .toString(),
-                style: TextStyle(
-                  fontSize: 28.sp,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
+              BlocBuilder<GamePlayOneBloc, GamePlayOneState>(
+                builder: (context, state) {
+                  return Text(
+                    state.currentCoin
+                        .toString(),
+                    style: TextStyle(
+                      fontSize: 28.sp,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  );
+                },
               ),
               Image.asset(
                 'assets/icons/coin.png',
